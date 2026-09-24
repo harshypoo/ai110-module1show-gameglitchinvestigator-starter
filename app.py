@@ -36,6 +36,8 @@ st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
 if "secret" not in st.session_state:
     st.session_state.secret = random.randint(low, high)
 
+# FIXME: Attempt is initialized at 1 instead of 0, so the first guess is counted as attempt 2.
+# FIX: Used Claude to initialize attempts at 0 so the first guess is counted as attempt
 if "attempts" not in st.session_state:
     st.session_state.attempts = 0
 
@@ -54,6 +56,7 @@ if "game_id" not in st.session_state:
 st.subheader("Make a guess")
 
 st.info(
+    # FIXME: Between 1 and 100 is hardcoded here, but the range should be dynamic based on difficulty.
     # FIX: Used Claude to write the new info message. It now dynamically shows the range and attempts left based on difficulty.
     f"Guess a number between {low} and {high}. "
     f"Attempts left: {attempt_limit - st.session_state.attempts}"
@@ -68,6 +71,7 @@ with st.expander("Developer Debug Info"):
 
 raw_guess = st.text_input(
     "Enter your guess:",
+    # FIXME: Thehe old guess remains in the input box after starting a new game.
     # FIX: Used Claude to fold game_id into the key so New Game gets a
     # fresh (empty) input box instead of leaving the old guess behind.
     key=f"guess_input_{difficulty}_{st.session_state.game_id}"
@@ -107,9 +111,10 @@ if submit:
         st.session_state.history.append(raw_guess)
         st.error(err)
     else:
+        # FIXME: Invalid guesses were counted against the attempt limit, 
+        # so a first-guess win could be scored as 90 instead of 100.
         # FIX: Used Claude to only count valid guesses against the attempt
-        # limit. Invalid input (e.g. "banana" or "5.5") used to eat an
-        # attempt even though it was never checked against the secret.
+        # limit.
         st.session_state.attempts += 1
         st.session_state.history.append(guess_int)
 
@@ -120,9 +125,10 @@ if submit:
         if show_hint:
             st.warning(message)
 
-        # FIX: attempts is incremented above before this call, so pass
-        # attempts - 1 to keep attempt_number 0-indexed, matching the
-        # scoring formula's spec (first guess == attempt_number 0).
+        # FIXME: Attempts were passed to update_score as 1-indexed, 
+        # but the scoring formula is 0-indexed (first guess == attempt_number 0).
+        # FIX: pass attempts - 1 to keep attempt_number 0-indexed, matching
+        # the scoring formula's spec (first guess == attempt_number 0).
         st.session_state.score = update_score(
             current_score=st.session_state.score,
             outcome=outcome,

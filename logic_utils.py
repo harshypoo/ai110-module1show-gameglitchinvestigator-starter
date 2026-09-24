@@ -21,8 +21,8 @@ def parse_guess(raw: str):
     if raw == "":
         return False, None, "Enter a guess."
 
-    # FIX: Used Claude to reject decimal input instead of silently
-    # truncating it (e.g. "42.9" used to become 42).
+    # FIXME: Floats were accepted as valid input, but the game is supposed to only accept whole numbers.
+    # FIX: Used Claude to reject decimal input instead.
     if "." in raw:
         return False, None, "Enter a whole number, not a decimal."
 
@@ -58,6 +58,7 @@ def update_score(current_score: int, outcome: str, attempt_number: int):
             points = 10
         return current_score + points
 
+    # FIXME: Would +5 or -5 points for incorrect guesses, but the scoring formula was never implemented.
     # FIX: Used Claude to write the new update_score logic. It now deducts 5 points for incorrect guesses.
     if outcome == "Too High":
         return current_score - 5
