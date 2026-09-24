@@ -14,9 +14,9 @@ Document at least 3 bugs you found. Add rows as needed.
 
 | Input | Expected Behavior | Actual Behavior | Console Output / Error |
 |-------|-------------------|-----------------|------------------------|
-| | | | |
-| | | | |
-| | | | |
+| | | | | Hint gives a real hint | keeps saying go lower | logic_util.py
+| | | | | new game resets old guesses | new game just sets new secret, doesnt get rid of old guesses | logic_utils.py
+| | | | | can't input numbers out of bounds | takes numbers out of bounds | app.py
 
 ---
 
