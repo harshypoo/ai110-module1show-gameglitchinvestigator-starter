@@ -56,13 +56,26 @@ explain what we are doing at that point.
 ## 4. What did you learn about Streamlit and state?
 
 - How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
-
+Streamlit runs your python code from the very beginning every time you rerun the app. It is basically
+a wipe of the app and a brand new start. Session state allows us to remember what happened in the
+previous games so that we are not losing our memory!
 
 ---
 
 ## 5. Looking ahead: your developer habits
 
 - What is one habit or strategy from this project that you want to reuse in future labs or projects?
-  - This could be a testing habit, a prompting strategy, or a way you used Git.
+I want to make it more of a habit to search for the bug and understand what it does before immediately
+asking AI to help me find all the bugs and fix it. I can do one final run and ask AI what bugs
+remain, but that should not be the first step.
+
+- This could be a testing habit, a prompting strategy, or a way you used Git.
+I also want to make it more of a habit to commit the changes that I make with Git very often.
+
 - What is one thing you would do differently next time you work with AI on a coding task?
+I would do more testing on the app in real time rather than just finding bugs and fixing them.
+I honestly just fixed them and did not test them ASAP.
+
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
+I understand that AI cannot fix everything all the time. Every change requires human input, but
+it is a great guide to help you understand what you are doing.

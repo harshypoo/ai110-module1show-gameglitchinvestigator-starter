@@ -26,18 +26,27 @@ It wrote the code, ran away, and now the game is unplayable.
 ## 📝 Document Your Experience
 
 - [ ] Describe the game's purpose.
+The purpose of this game is to guess a number within a certain amount of tries. You have hints on
+going higher or lower as needed.
+
 - [ ] Detail which bugs you found.
+I found bugs such as not being able to start a new game, the score not updating correctly, the
+hints not updating right, and plenty of more that occurred throughout testing.
+
 - [ ] Explain what fixes you applied.
+I fixed the score not updating correctly through changing the calculations, the hints not
+updating right by changing how they were applied, deleting the old guess list when starting
+a new game, rejecting any non-integer inputs, keeping all guesses within boundaries, and more!
 
 ## 📸 Demo Walkthrough
 
 Describe your fixed game in numbered steps so a reader can follow along without watching a video:
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+1. User enters a guess of 30 when the number is really 55.
+2. The game returns "Too Low" and tells the user to "Go Higher". The score is appended to the guess list and the score drops -5.
+3. User enters the number 60 and the game returns "Too High" and tells the user to "Go Lower". The guess is appended to the guess list and score drops -5.
+4. User enters the number 55. The game shows that it's right and ends as a win. The score is calculated as (your_score) + (100 - 10 * (attempt_number + 1)).
+5. Game ends and you can create a new game.
 
 **Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
 

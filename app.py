@@ -107,14 +107,16 @@ if st.session_state.status != "playing":
 if submit:
     ok, guess_int, err = parse_guess(raw_guess)
 
+    # FIXME: Invalid guesses were counted against the attempt limit,
+    # and guesses outside the range were accepted as valid input.
+    # FIX: Used Claude to only count valid guesses against the attempt limit, and to reject guesses outside the range.
+    if ok and (guess_int < low or guess_int > high):
+        ok = False
+        err = f"Enter a number between {low} and {high}."
+
     if not ok:
-        st.session_state.history.append(raw_guess)
         st.error(err)
     else:
-        # FIXME: Invalid guesses were counted against the attempt limit, 
-        # so a first-guess win could be scored as 90 instead of 100.
-        # FIX: Used Claude to only count valid guesses against the attempt
-        # limit.
         st.session_state.attempts += 1
         st.session_state.history.append(guess_int)
 
