@@ -21,11 +21,13 @@ def parse_guess(raw: str):
     if raw == "":
         return False, None, "Enter a guess."
 
+    # FIX: Used Claude to reject decimal input instead of silently
+    # truncating it (e.g. "42.9" used to become 42).
+    if "." in raw:
+        return False, None, "Enter a whole number, not a decimal."
+
     try:
-        if "." in raw:
-            value = int(float(raw))
-        else:
-            value = int(raw)
+        value = int(raw)
     except Exception:
         return False, None, "That is not a number."
 
@@ -56,9 +58,8 @@ def update_score(current_score: int, outcome: str, attempt_number: int):
             points = 10
         return current_score + points
 
+    # FIX: Used Claude to write the new update_score logic. It now deducts 5 points for incorrect guesses.
     if outcome == "Too High":
-        if attempt_number % 2 == 0:
-            return current_score + 5
         return current_score - 5
 
     if outcome == "Too Low":

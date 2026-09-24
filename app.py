@@ -37,7 +37,7 @@ if "secret" not in st.session_state:
     st.session_state.secret = random.randint(low, high)
 
 if "attempts" not in st.session_state:
-    st.session_state.attempts = 1
+    st.session_state.attempts = 0
 
 if "score" not in st.session_state:
     st.session_state.score = 0
@@ -48,10 +48,14 @@ if "status" not in st.session_state:
 if "history" not in st.session_state:
     st.session_state.history = []
 
+if "game_id" not in st.session_state:
+    st.session_state.game_id = 0
+
 st.subheader("Make a guess")
 
 st.info(
-    f"Guess a number between 1 and 100. "
+    # FIX: Used Claude to write the new info message. It now dynamically shows the range and attempts left based on difficulty.
+    f"Guess a number between {low} and {high}. "
     f"Attempts left: {attempt_limit - st.session_state.attempts}"
 )
 
@@ -64,7 +68,9 @@ with st.expander("Developer Debug Info"):
 
 raw_guess = st.text_input(
     "Enter your guess:",
-    key=f"guess_input_{difficulty}"
+    # FIX: Used Claude to fold game_id into the key so New Game gets a
+    # fresh (empty) input box instead of leaving the old guess behind.
+    key=f"guess_input_{difficulty}_{st.session_state.game_id}"
 )
 
 col1, col2, col3 = st.columns(3)
@@ -75,13 +81,15 @@ with col2:
 with col3:
     show_hint = st.checkbox("Show hint", value=True)
 
-# FIX: Used Claude to write the new game logic. It now resets attempts, score, status, and history correctly.
+# FIX: Used Claude to write the new game logic. It now resets attempts, score,
+# status, and history correctly. Also starts attempts at 0.
 if new_game:
     st.session_state.attempts = 0
     st.session_state.secret = random.randint(low, high)
     st.session_state.status = "playing"
     st.session_state.history = []
     st.session_state.score = 0
+    st.session_state.game_id += 1
     st.success("New game started.")
     st.rerun()
 
@@ -93,31 +101,32 @@ if st.session_state.status != "playing":
     st.stop()
 
 if submit:
-    st.session_state.attempts += 1
-
     ok, guess_int, err = parse_guess(raw_guess)
 
     if not ok:
         st.session_state.history.append(raw_guess)
         st.error(err)
     else:
+        # FIX: Used Claude to only count valid guesses against the attempt
+        # limit. Invalid input (e.g. "banana" or "5.5") used to eat an
+        # attempt even though it was never checked against the secret.
+        st.session_state.attempts += 1
         st.session_state.history.append(guess_int)
 
-        # FIX: Used Claude to write the new check_guess logic. It now handles both int and str comparisons correctly.
-        if st.session_state.attempts % 2 == 0:
-            secret = str(st.session_state.secret)
-        else:
-            secret = st.session_state.secret
-
-        outcome, message = check_guess(guess_int, secret)
+        # FIX: Used Claude to remove the int/str secret alternation. check_guess
+        # already casts both sides to int, so the alternation was dead code.
+        outcome, message = check_guess(guess_int, st.session_state.secret)
 
         if show_hint:
             st.warning(message)
 
+        # FIX: attempts is incremented above before this call, so pass
+        # attempts - 1 to keep attempt_number 0-indexed, matching the
+        # scoring formula's spec (first guess == attempt_number 0).
         st.session_state.score = update_score(
             current_score=st.session_state.score,
             outcome=outcome,
-            attempt_number=st.session_state.attempts,
+            attempt_number=st.session_state.attempts - 1,
         )
 
         if outcome == "Win":
